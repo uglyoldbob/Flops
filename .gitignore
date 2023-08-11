@@ -12,3 +12,5 @@ _deps
 *.so.*
 *.so
 *.pc
+/target
+/Cargo.lock
