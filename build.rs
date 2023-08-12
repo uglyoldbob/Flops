@@ -127,6 +127,7 @@ fn main() {
     let compiled_path: PathBuf = compile(source_path.as_path(), target_os);
     copy_dynamic_libraries(&compiled_path, target_os);
 
+    #[cfg(target_os = "linux")]
     println!(
         "cargo:rustc-link-arg=-Wl,-rpath,{}",
         compiled_path.join("lib")
@@ -139,7 +140,7 @@ fn main() {
         compiled_path.join("lib").display()
     );
 
-    println!("cargo:rustc-link-lib=cpuload");
+    println!("cargo:rustc-link-lib=dylib=cpuload");
 
     let includes = source_path.join("include").to_str().unwrap().to_string();
 }
