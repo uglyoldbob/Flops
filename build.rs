@@ -129,15 +129,11 @@ fn main() {
 
     println!(
         "cargo:rustc-link-arg=-Wl,-rpath,{}",
-        compiled_path
+        compiled_path.join("lib")
             .to_str()
             .expect("Link path is not an UTF-8 string")
     );
 
-    println!(
-        "cargo:rustc-link-search={}",
-        compiled_path.join("lib64").display()
-    );
     println!(
         "cargo:rustc-link-search={}",
         compiled_path.join("lib").display()
