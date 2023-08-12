@@ -62,10 +62,9 @@ fn copy_dynamic_libraries(compiled_path: &PathBuf, target_os: &str) {
     // copy *.dll out of its build tree and down to the top level cargo
     // binary output directory.
     if target_os.contains("windows") {
-        let dll_name = "cpuload.dll";
-        let bin_path = compiled_path.join("bin");
-        let src_dll_path = bin_path.join(dll_name);
-
+        let dll_name = "cpuload.lib";
+        let lib_path = compiled_path.join("lib");
+        let src_dll_path = lib_path.join(dll_name);
         copy_library_file(&src_dll_path, &target_path);
     } else if target_os != "emscripten" {
         let dll_names = ["libcpuload.so", "libcpuload.so.1", "libcpuload.so.1.0.1"];
@@ -135,6 +134,12 @@ fn main() {
             .expect("Link path is not an UTF-8 string")
     );
 
+    #[cfg(target_os = "windows")]
+    println!(
+        "cargo:rustc-link-search={}",
+        compiled_path.join("bin").display()
+    );
+    #[cfg(target_os = "linux")]
     println!(
         "cargo:rustc-link-search={}",
         compiled_path.join("lib").display()

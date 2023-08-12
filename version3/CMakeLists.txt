@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 project(cpuload VERSION 1.0.1 DESCRIPTION "cpu load library")
 include(GNUInstallDirs)
-add_library(cpuload SHARED Source/load.cpp Source/Benchmark.cpp)
+add_library(cpuload Source/load.cpp Source/Benchmark.cpp)
 set_target_properties(cpuload PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
