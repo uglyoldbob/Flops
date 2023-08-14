@@ -52,31 +52,6 @@ fn copy_library_file(src_path: &Path, target_path: &Path) {
     }
 }
 
-fn copy_dynamic_libraries(compiled_path: &PathBuf, target_os: &str) {
-    let target_path = find_cargo_target_dir();
-
-    // Windows binaries do not embed library search paths, so successfully
-    // linking the DLL isn't sufficient to find it at runtime -- it must be
-    // either on PATH or in the current working directory when we run binaries
-    // linked against it. In other words, to run the test suite we need to
-    // copy *.dll out of its build tree and down to the top level cargo
-    // binary output directory.
-    if target_os.contains("windows") {
-        let dll_name = "cpuload.lib";
-        let lib_path = compiled_path.join("lib");
-        let src_dll_path = lib_path.join(dll_name);
-        copy_library_file(&src_dll_path, &target_path);
-    } else if target_os != "emscripten" {
-        let dll_names = ["libcpuload.so", "libcpuload.so.1", "libcpuload.so.1.0.1"];
-        for dll_name in dll_names {
-            let bin_path = compiled_path.join("lib");
-            let src_dll_path = bin_path.join(dll_name);
-
-            copy_library_file(&src_dll_path, &target_path);
-        }
-    }
-}
-
 fn compile(sdl2_build_path: &Path, target_os: &str) -> PathBuf {
     let mut cfg = cmake::Config::new(sdl2_build_path);
     if let Ok(profile) = env::var("CPULOAD_BUILD_PROFILE") {
@@ -124,7 +99,6 @@ fn main() {
 
     source_path.push("version3");
     let compiled_path: PathBuf = compile(source_path.as_path(), target_os);
-    copy_dynamic_libraries(&compiled_path, target_os);
 
     #[cfg(target_os = "linux")]
     println!(
@@ -145,7 +119,8 @@ fn main() {
         compiled_path.join("lib").display()
     );
 
-    println!("cargo:rustc-link-lib=dylib=cpuload");
+    println!("cargo:rustc-link-lib=static=cpuload");
+    println!("cargo:rustc-link-lib=stdc++");
 
     let includes = source_path.join("include").to_str().unwrap().to_string();
 }

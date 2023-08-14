@@ -8,5 +8,5 @@ Description: @PROJECT_DESCRIPTION@
 Version: @PROJECT_VERSION@
 
 Requires:
-Libs: -L${libdir} -lcpuload
+Libs: -L${libdir} -lcpuload -lstdc++
 Cflags: -I${includedir}
