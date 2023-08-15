@@ -108,12 +108,6 @@ fn main() {
             .expect("Link path is not an UTF-8 string")
     );
 
-    #[cfg(target_os = "windows")]
-    println!(
-        "cargo:rustc-link-search={}",
-        compiled_path.join("bin").display()
-    );
-    #[cfg(target_os = "linux")]
     println!(
         "cargo:rustc-link-search={}",
         compiled_path.join("lib").display()
