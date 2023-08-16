@@ -101,20 +101,22 @@ fn main() {
     let compiled_path: PathBuf = compile(source_path.as_path(), target_os);
 
     #[cfg(target_os = "linux")]
-    println!(
-        "cargo:rustc-link-arg=-Wl,-rpath,{}",
-        compiled_path.join("lib")
-            .to_str()
-            .expect("Link path is not an UTF-8 string")
-    );
-
-    println!(
-        "cargo:rustc-link-search={}",
-        compiled_path.join("lib").display()
-    );
-
-    println!("cargo:rustc-link-lib=static=cpuload");
-    println!("cargo:rustc-link-lib=stdc++");
+    {
+		env::set_var("PKG_CONFIG_PATH", format!("{}", compiled_path.join("share").join("pkgconfig").display()));
+		pkg_config::Config::new()
+			.atleast_version("0.1.1")
+			.statik(true)
+			.probe("cpuload")
+			.expect("Could not find a suitable version of cpuload");
+    }
+    #[cfg(target_os = "windows")]
+    {
+		println!(
+		    "cargo:rustc-link-search=native={}",
+		    compiled_path.join("lib").display()
+		);
+		println!("cargo:rustc-link-lib=static=cpuload");
+    }
 
     let includes = source_path.join("include").to_str().unwrap().to_string();
 }
