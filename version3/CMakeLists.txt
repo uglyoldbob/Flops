@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.9)
 project(cpuload VERSION 1.0.1 DESCRIPTION "cpu load library")
 include(GNUInstallDirs)
+SET( CMAKE_CXX_EXTENSIONS OFF )
 add_library(cpuload STATIC Source/load.cpp Source/Benchmark.cpp)
+set_property(TARGET cpuload PROPERTY CXX_STANDARD 11)
+set_property(TARGET cpuload PROPERTY CXX_STANDARD_REQUIRED ON)
 set_target_properties(cpuload PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
